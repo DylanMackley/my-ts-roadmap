@@ -240,7 +240,7 @@ export default function Roadmap() {
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ fontSize: 10, color: "#4A5A6A", letterSpacing: 2, textTransform: "uppercase" }}>Target Role</div>
-          <div style={{ fontSize: 13, color: "#A855F7", fontWeight: 600, letterSpacing: 1 }}>T&S Engineer @ Vercel</div>
+          <div style={{ fontSize: 13, color: "#A855F7", fontWeight: 600, letterSpacing: 1 }}>T&S Engineer</div>
           <div style={{ fontSize: 10, color: "#2A3A4A", marginTop: 2 }}>est. timeline: 12–18 months</div>
         </div>
       </div>
@@ -472,13 +472,6 @@ export default function Roadmap() {
               <span style={{ fontSize: 10, color: "#6A7A8A", lineHeight: 1.5 }}>{action}</span>
             </div>
           ))}
-
-          <div style={{ marginTop: 20, padding: 14, borderRadius: 4, border: "1px solid rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.06)" }}>
-            <div style={{ fontSize: 10, color: "#A855F7", fontWeight: 600, marginBottom: 6 }}>Sister-in-law Strategy</div>
-            <div style={{ fontSize: 10, color: "#4A5A6A", lineHeight: 1.6 }}>
-              Don't ask for a referral yet. Ask for a 30-min monthly mentorship call. Show her this project in 3 months. Ask for referral at month 9.
-            </div>
-          </div>
         </div>
       </div>
     </div>
