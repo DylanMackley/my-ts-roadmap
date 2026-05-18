@@ -163,16 +163,16 @@ const phases = [
 ];
 
 const tools = [
-  { name: "VS Code", status: "active", category: "Editor" },
-  { name: "GitHub", status: "active", category: "Version Control" },
-  { name: "Python", status: "learning", category: "Language" },
-  { name: "SQL", status: "next", category: "Data" },
-  { name: "Pandas", status: "next", category: "Data" },
-  { name: "scikit-learn", status: "soon", category: "ML" },
-  { name: "AWS SQS", status: "learning", category: "Cloud" },
-  { name: "Docker", status: "soon", category: "Infra" },
-  { name: "OpenAI API", status: "soon", category: "LLM" },
-  { name: "TSPA Cert", status: "soon", category: "Domain" },
+ { name: "VS Code", status: "active", category: "Editor", linkedItem: "VS Code" },
+{ name: "GitHub", status: "active", category: "Version Control", linkedItem: "Git + GitHub" },
+{ name: "Python", status: "learning", category: "Language", linkedItem: "Python Basics" },
+{ name: "SQL", status: "next", category: "Data", linkedItem: "SQL" },
+{ name: "Pandas", status: "next", category: "Data", linkedItem: "Pandas (Python)" },
+{ name: "scikit-learn", status: "soon", category: "ML", linkedItem: "scikit-learn" },
+{ name: "AWS SQS", status: "learning", category: "Cloud", linkedItem: "Queues & Async" },
+{ name: "Docker", status: "soon", category: "Infra", linkedItem: "Docker Basics" },
+{ name: "OpenAI API", status: "soon", category: "LLM", linkedItem: "OpenAI API" },
+{ name: "TSPA Cert", status: "soon", category: "Domain", linkedItem: "TSPA Certification" },
 ];
 
 export default function Roadmap() {
@@ -314,15 +314,15 @@ export default function Roadmap() {
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 padding: "5px 0", borderBottom: "1px solid #0E1820"
               }}>
-                <span style={{ fontSize: 10, color: t.status === "active" ? "#10B981" : t.status === "learning" ? "#F59E0B" : "#2A3A4A" }}>
+                <span style={{ fontSize: 10, color: completedItems[t.linkedItem] ? "#10B981" : t.status === "active" ? "#10B981" : t.status === "learning" ? "#F59E0B" : "#2A3A4A" }}>
                   {t.name}
                 </span>
                 <span style={{
                   fontSize: 8, letterSpacing: 1, padding: "1px 5px", borderRadius: 2,
                   background: t.status === "active" ? "rgba(16,185,129,0.15)" : t.status === "learning" ? "rgba(245,158,11,0.15)" : "rgba(42,58,74,0.3)",
-                  color: t.status === "active" ? "#10B981" : t.status === "learning" ? "#F59E0B" : "#2A3A4A"
+                  color: completedItems[t.linkedItem] ? "#10B981" : t.status === "active" ? "#10B981" : t.status === "learning" ? "#F59E0B" : "#2A3A4A"
                 }}>
-                  {t.status === "active" ? "ACTIVE" : t.status === "learning" ? "WIP" : "SOON"}
+                {completedItems[t.linkedItem] ? "DONE" : t.status === "active" ? "ACTIVE" : t.status === "learning" ? "WIP" : "SOON"}
                 </span>
               </div>
             ))}
