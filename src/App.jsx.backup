@@ -154,7 +154,7 @@ const phases = [
         items: [
           { name: "Vercel (target)", tag: "Long game", url: "https://vercel.com/careers", note: "Start with T&S Analyst if posted. Your sister-in-law is your edge" },
           { name: "Discord / Reddit / Twitch", tag: "Good targets", url: "https://discord.com/jobs", note: "All have active T&S teams. Less competitive than FAANG" },
-          { name: "Cloudflare", tag: "Stretch", url: "https://cloudflare.com/careers", note: "Heavy infrastructure overlap with your SQS/queue work" },
+          { name: "Cloudflare", tag: "Stretch", tag2: "Dream", url: "https://cloudflare.com/careers", note: "Heavy infrastructure overlap with your SQS/queue work" },
           { name: "Startups via AngelList", tag: "Entry point", url: "https://wellfound.com", note: "Smaller companies hire junior T&S. Great for first role" },
         ]
       },
@@ -179,28 +179,6 @@ export default function Roadmap() {
   const [activePhase, setActivePhase] = useState(1);
   const [hoveredItem, setHoveredItem] = useState(null);
 
-  // completedItems stores which cards you've marked done
-  // It reads from localStorage on first load so progress is saved
-  const [completedItems, setCompletedItems] = useState(() => {
-    const saved = localStorage.getItem("ts-completed");
-    return saved ? JSON.parse(saved) : {};
-  });
-
-  // toggleItem runs when you click MARK DONE or UNDO on a card
-  // It flips the item between complete and incomplete, then saves to localStorage
-  const toggleItem = (itemName) => {
-    setCompletedItems(prev => {
-      const updated = { ...prev };
-      if (updated[itemName]) {
-        delete updated[itemName]; // undo if already done
-      } else {
-        updated[itemName] = true; // mark as done
-      }
-      localStorage.setItem("ts-completed", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
   const phase = phases.find(p => p.id === activePhase);
 
   return (
@@ -220,7 +198,7 @@ export default function Roadmap() {
         ::-webkit-scrollbar-thumb { background: #1E2A3A; border-radius: 2px; }
         .phase-btn { transition: all 0.2s ease; cursor: pointer; border: none; background: none; }
         .phase-btn:hover { transform: translateX(3px); }
-        .item-card { transition: all 0.15s ease; }
+        .item-card { transition: all 0.15s ease; cursor: pointer; }
         .item-card:hover { transform: translateY(-1px); }
         .tool-chip { transition: all 0.2s ease; }
         .glow-text { text-shadow: 0 0 20px currentColor; }
@@ -229,8 +207,6 @@ export default function Roadmap() {
         .scanline { animation: scan 8s linear infinite; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         .fade-in { animation: fadeIn 0.3s ease forwards; }
-        .mark-btn { transition: all 0.15s ease; }
-        .mark-btn:hover { opacity: 0.8; }
       `}</style>
 
       {/* Scanline effect */}
@@ -374,84 +350,47 @@ export default function Roadmap() {
                   </div>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                    {cat.items.map(item => {
-                      const isDone = !!completedItems[item.name];
-                      return (
-                        <div
-                          key={item.name}
-                          className="item-card"
-                          onMouseEnter={() => setHoveredItem(item.name)}
-                          onMouseLeave={() => setHoveredItem(null)}
-                          style={{
-                            display: "block",
-                            padding: "14px 16px", borderRadius: 4,
-                            border: `1px solid ${isDone ? "#22c55e" : hoveredItem === item.name ? phase.border : "#1E2A3A"}`,
-                            background: isDone ? "rgba(34,197,94,0.08)" : hoveredItem === item.name ? phase.bg : "rgba(255,255,255,0.02)",
-                            transition: "all 0.15s ease"
-                          }}>
-
-                          {/* Item name + tag */}
-                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
-                            <span style={{ fontSize: 13, fontWeight: 600, color: isDone ? "#22c55e" : "#D0D8E8", letterSpacing: 0.3 }}>
-                              {isDone ? "✓ " : ""}{item.name}
-                            </span>
-                            <div style={{ display: "flex", gap: 4, flexShrink: 0, marginLeft: 8 }}>
-                              {item.tag && (
-                                <span style={{
-                                  fontSize: 8, letterSpacing: 1, padding: "2px 6px", borderRadius: 2,
-                                  background: item.tag === "You're here" || item.tag === "Your project!" ? "rgba(16,185,129,0.2)" :
-                                    item.tag === "Priority #1" || item.tag === "Priority" || item.tag === "Critical" || item.tag === "Do this first" ? `rgba(${phase.color === "#00D4FF" ? "0,212,255" : phase.color === "#FF6B35" ? "255,107,53" : phase.color === "#A855F7" ? "168,85,247" : phase.color === "#10B981" ? "16,185,129" : "245,158,11"},0.2)` :
-                                      "rgba(42,58,74,0.5)",
-                                  color: item.tag === "You're here" || item.tag === "Your project!" ? "#10B981" :
-                                    item.tag === "Priority #1" || item.tag === "Priority" || item.tag === "Critical" || item.tag === "Do this first" ? phase.color :
-                                      "#4A5A6A",
-                                  whiteSpace: "nowrap"
-                                }}>
-                                  {item.tag}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Note */}
-                          <div style={{ fontSize: 10, color: "#4A5A6A", lineHeight: 1.6, marginBottom: 10 }}>
-                            {item.note}
-                          </div>
-
-                          {/* Bottom row: MARK DONE button + link */}
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            {/* MARK DONE / UNDO button */}
-                            <button
-                              className="mark-btn"
-                              onClick={() => toggleItem(item.name)}
-                              style={{
-                                padding: "3px 10px",
-                                fontSize: 9,
-                                fontWeight: 600,
-                                letterSpacing: 1,
-                                border: `1px solid ${isDone ? "#22c55e" : "#2A3A4A"}`,
-                                borderRadius: 3,
-                                cursor: "pointer",
-                                background: isDone ? "rgba(34,197,94,0.15)" : "transparent",
-                                color: isDone ? "#22c55e" : "#4A5A6A",
-                              }}
-                            >
-                              {isDone ? "✓ DONE — UNDO" : "MARK DONE"}
-                            </button>
-
-                            {/* Link */}
-                            <a
-                              href={item.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{ fontSize: 9, color: phase.color, opacity: hoveredItem === item.name ? 0.8 : 0.3, textDecoration: "none" }}
-                            >
-                              {item.url.replace("https://", "")} ↗
-                            </a>
+                    {cat.items.map(item => (
+                      <a key={item.name} href={item.url} target="_blank" rel="noreferrer"
+                        className="item-card"
+                        onMouseEnter={() => setHoveredItem(item.name)}
+                        onMouseLeave={() => setHoveredItem(null)}
+                        style={{
+                          display: "block", textDecoration: "none",
+                          padding: "14px 16px", borderRadius: 4,
+                          border: `1px solid ${hoveredItem === item.name ? phase.border : "#1E2A3A"}`,
+                          background: hoveredItem === item.name ? phase.bg : "rgba(255,255,255,0.02)",
+                          transition: "all 0.15s ease"
+                        }}>
+                        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "#D0D8E8", letterSpacing: 0.3 }}>
+                            {item.name}
+                          </span>
+                          <div style={{ display: "flex", gap: 4, flexShrink: 0, marginLeft: 8 }}>
+                            {item.tag && (
+                              <span style={{
+                                fontSize: 8, letterSpacing: 1, padding: "2px 6px", borderRadius: 2,
+                                background: item.tag === "You're here" || item.tag === "Your project!" ? "rgba(16,185,129,0.2)" :
+                                  item.tag === "Priority #1" || item.tag === "Priority" || item.tag === "Critical" || item.tag === "Do this first" ? `rgba(${phase.color === "#00D4FF" ? "0,212,255" : phase.color === "#FF6B35" ? "255,107,53" : phase.color === "#A855F7" ? "168,85,247" : phase.color === "#10B981" ? "16,185,129" : "245,158,11"},0.2)` :
+                                    "rgba(42,58,74,0.5)",
+                                color: item.tag === "You're here" || item.tag === "Your project!" ? "#10B981" :
+                                  item.tag === "Priority #1" || item.tag === "Priority" || item.tag === "Critical" || item.tag === "Do this first" ? phase.color :
+                                    "#4A5A6A",
+                                whiteSpace: "nowrap"
+                              }}>
+                                {item.tag}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      );
-                    })}
+                        <div style={{ fontSize: 10, color: "#4A5A6A", lineHeight: 1.6 }}>
+                          {item.note}
+                        </div>
+                        <div style={{ fontSize: 9, color: phase.color, marginTop: 6, opacity: hoveredItem === item.name ? 0.8 : 0.3 }}>
+                          {item.url.replace("https://", "")} ↗
+                        </div>
+                      </a>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -459,7 +398,7 @@ export default function Roadmap() {
           )}
         </div>
 
-        {/* Right sidebar */}
+        {/* Right sidebar — your project context */}
         <div style={{
           width: 240, flexShrink: 0,
           borderLeft: "1px solid #1E2A3A",
@@ -475,8 +414,8 @@ export default function Roadmap() {
             padding: 14, borderRadius: 4, border: "1px solid rgba(16,185,129,0.3)",
             background: "rgba(16,185,129,0.06)", marginBottom: 20
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", animation: "pulse 2s infinite", flexShrink: 0 }} />
+            <div style={{ display: "flex", items: "center", gap: 6, marginBottom: 8 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", animation: "pulse 2s infinite", marginTop: 2, flexShrink: 0 }} />
               <span style={{ fontSize: 11, color: "#10B981", fontWeight: 600 }}>Active Build</span>
             </div>
             <div style={{ fontSize: 12, color: "#D0D8E8", fontWeight: 600, marginBottom: 6 }}>
@@ -486,7 +425,7 @@ export default function Roadmap() {
               Marketplace bot detection with mock AI signals. VS Code + GitHub setup.
             </div>
             <div style={{ marginTop: 10 }}>
-              {["VS Code", "GitHub", "SQS Queue", "ML Classifier", "API Layer"].map((step, i) => (
+              {["VS Code ✓", "GitHub ✓", "SQS Queue", "ML Classifier", "API Layer"].map((step, i) => (
                 <div key={step} style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0" }}>
                   <div style={{
                     width: 14, height: 14, borderRadius: 2, flexShrink: 0,
@@ -496,7 +435,7 @@ export default function Roadmap() {
                   }}>
                     {i < 2 && <span style={{ fontSize: 8, color: "#080C12" }}>✓</span>}
                   </div>
-                  <span style={{ fontSize: 10, color: i < 2 ? "#10B981" : "#4A5A6A" }}>{step}</span>
+                  <span style={{ fontSize: 10, color: i < 2 ? "#10B981" : "#4A5A6A" }}>{step.replace(" ✓","")}</span>
                 </div>
               ))}
             </div>
@@ -533,12 +472,6 @@ export default function Roadmap() {
               <span style={{ fontSize: 10, color: "#6A7A8A", lineHeight: 1.5 }}>{action}</span>
             </div>
           ))}
-
-          <div style={{ marginTop: 20, padding: 14, borderRadius: 4, border: "1px solid rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.06)" }}>
-            <div style={{ fontSize: 10, color: "#4A5A6A", lineHeight: 1.6 }}>
-              Ask for a 30-min monthly mentorship call. Show this project in 3 months. Ask for referral at month 9.
-            </div>
-          </div>
         </div>
       </div>
     </div>
